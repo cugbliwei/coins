@@ -11,7 +11,7 @@
       <div class="tab-title">
         OTC出售汇总
         <span class="speed">
-          吞吐速度: 读取数据至15列 - 时间30s - 123.123
+          吞吐速度: {{speedOut}}
         </span>
       </div>
       <el-table :data="tableData" border style="width: 100%" height="200" v-loading="loading">
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  props: ['tableData', 'tableSummary', 'loading', 'rankLoading', 'outRankData'],
+  props: ['tableData', 'tableSummary', 'loading', 'rankLoading', 'outRankData', 'speedOut'],
 }
 </script>
 

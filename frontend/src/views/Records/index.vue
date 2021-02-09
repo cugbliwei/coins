@@ -8,8 +8,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="收款方式">
-          <el-select v-model="formInline.pay_type" clearable="">
+          <el-select v-model="formInline.pay_type" clearable>
             <el-option v-for="item in paywayList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="吞吐量">
+          <el-select v-model="formInline.number" clearable>
+            <el-option v-for="item in speedList" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="蓝盾">
@@ -26,7 +31,8 @@
           :tableData="summary_out" 
           :loading="summary_loading" 
           :out-rank-data="outRankData"
-          :rankLoading="rank_loading" />
+          :rankLoading="rank_loading"
+          :speed-out="speed_out" />
         <otc-out 
           :tableData="origin_out" 
           :loading="origin_loading" />
@@ -36,7 +42,8 @@
           :tableData="summary_in" 
           :loading="summary_loading" 
           :in-rank-data="inRankData"
-          :rankLoading="rank_loading" />
+          :rankLoading="rank_loading"
+          :speed-in="speed_in" />
         <otc-in 
           :tableData="origin_in" 
           :loading="origin_loading" />
@@ -93,11 +100,21 @@ export default {
       outRankData: [],
       inRankData: [],
       formInline: {
-        coin_name: '',
+        coin_name: 'USDT',
         pay_type: '',
         autoRenew: '',
         landun: false,
-      }
+        number: 10,
+      },
+      speedList: [
+        {label: '10行', value: 10},
+        {label: '30行', value: 30},
+        {label: '50行', value: 50},
+        {label: '80行', value: 80},
+        {label: '100行', value: 100},
+      ],
+      speed_in: 0,
+      speed_out: 0,
     }
   },
   methods: {
@@ -107,6 +124,7 @@ export default {
       form.append('landun', this.formInline.landun ? 1 : 0)
       form.append('pay_type', this.formInline.pay_type)
       form.append('nickname', this.nickname)
+      form.append('number', this.formInline.number)
       this.origin_loading = true;
       this.summary_loading = true;
       this.rank_loading = true;
@@ -116,9 +134,27 @@ export default {
       this.origin_in = [];
       this.outRankData = [];
       this.inRankData = [];
+      this.speed_in = 0;
+      this.speed_out = 0;
       this.getOringin(form);
       this.getSummary(form);
       this.getRank(form);
+      this.getSpeed(form);
+    },
+    getSpeed (form) {
+      api.api_speed(form).then(res => {
+        if (res.data.buy) {
+          this.speed_in = res.data.buy
+        }
+        if (res.data.sell) {
+          this.speed_out = res.data.sell
+        }
+      }).catch(err => {
+        this.$message({
+          message: '查询吞吐量数据失败',
+          type: 'warning'
+        })
+      })
     },
     getRank (form) {
       api.api_rank(form).then(res => {
@@ -222,7 +258,7 @@ export default {
   }
   .speed {
     font-size: 12px;
-    color: #000;
+    color: #ff6a00;
     margin-left: 20px;
   }
 </style>
