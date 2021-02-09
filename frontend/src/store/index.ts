@@ -5,11 +5,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    nickname: '',
+  },
+  getters: {
+    GTE_NICKNAME: state => {
+      return state.nickname
+    },
   },
   mutations: {
-  },
-  actions: {
-  },
-  modules: {
+    SET_NICKNAME (state, nickname) {
+      state.nickname = nickname
+    },
   }
 })

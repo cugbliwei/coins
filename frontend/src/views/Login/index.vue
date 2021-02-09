@@ -6,7 +6,7 @@
           <input type="text" class="login-input" placeholder="请输入账号" v-model="username">
         </div>
         <div class="login-item">
-          <input type="password" class="login-input" placeholder="请输入密码" value="test" v-model="password">
+          <input type="password" class="login-input" placeholder="请输入密码" value="test" v-model="password" @keyup.enter="login">
         </div>
         <div class="login-item">
           <div class="login-button" @click="login" v-loading="isLogin">登录</div>
@@ -34,6 +34,7 @@ export default {
   },
   methods: {
     login () {
+      if (this.isLogin) return;
       this.isLogin = true;
       let form = new FormData();
       form.append('username', this.username);
@@ -46,6 +47,7 @@ export default {
             type: 'warning'
           })
         } else {
+          this.$store.commit("SET_NICKNAME", res.data.nickname);
           this.$router.replace({name: 'records'})
         }
       }).catch(err => {
