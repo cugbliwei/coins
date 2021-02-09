@@ -63,7 +63,7 @@ def request(link):
     err = ''
     for i in range(5):
         try:
-            rj = requests.get(link, headers=headers, proxies=get_proxy()).json()
+            rj = requests.get(link, headers=headers, proxies=get_proxy(), timeout=5).json()
             return True, rj
         except Exception as e:
             err = e
@@ -195,4 +195,4 @@ if __name__ == '__main__':
 
         print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         fetch_coins(ts)
-        break
+        print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
