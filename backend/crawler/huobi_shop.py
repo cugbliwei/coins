@@ -47,22 +47,38 @@ def get_proxy():
 
 
 class myThread(threading.Thread):
-    def __init__(self, trade_type, coin_id, coin_name, currPage):
+    def __init__(self, ts, trade_type, coin_id, coin_name, currPage):
         threading.Thread.__init__(self)
+        self.ts = ts
         self.trade_type = trade_type
         self.coin_id = coin_id
         self.coin_name = coin_name
         self.currPage = currPage
 
     def run(self):
-        fetch_coin(self.trade_type, self.coin_id, self.coin_name, self.currPage)
+        fetch_coin(self.ts, self.trade_type, self.coin_id, self.coin_name, self.currPage)
 
 
-def fetch_coin(trade_type, coin_id, coin_name, currPage):
+def request(link):
+    err = ''
+    for i in range(5):
+        try:
+            rj = requests.get(link, headers=headers, proxies=get_proxy()).json()
+            return True, rj
+        except Exception as e:
+            err = e
+    print(err)
+    return False, {}
+
+
+def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
     link = 'https://otc-api-hk.eiijo.cn/v1/data/trade-market?coinId=%s&currency=1&tradeType=%s&currPage=%d&payMethod=0&acceptOrder=-1&country=&blockType=general&online=1&range=0&amount=' % (coin_id, trade_type, currPage)
     print(link)
-    # rj = requests.get(link, headers=headers, proxies=get_proxy()).json()
-    rj = requests.get(link, headers=headers).json()
+    flag, rj = request(link)
+    if not flag:
+        print('request error: %s' % link)
+        return
+
     data = rj.get('data', [])
     values = []
     rank = (currPage - 1) * 10 + 1
@@ -85,20 +101,19 @@ def fetch_coin(trade_type, coin_id, coin_name, currPage):
         if merchantTags and merchantTags[0] == 1:
             landun = 1
         price = d.get('price', '')
-        values.append((trade_type, coin_name, rank, userName, tradeMonthTimes, orderCompleteRate, tradeCount, minTradeLimit, maxTradeLimit, payMethod, pay_name, landun, price))
+        values.append((ts, trade_type, coin_name, rank, userName, tradeMonthTimes, orderCompleteRate, tradeCount, minTradeLimit, maxTradeLimit, payMethod, pay_name, landun, price))
         # print(trade_type, coin_name, rank, userName, tradeMonthTimes, orderCompleteRate, tradeCount, minTradeLimit, maxTradeLimit, price)
         rank += 1
 
-    sql = 'insert into otc_origin(trade_type,coin_name,rank_cnt,user_name,trade_month_times,order_complete_rate,trade_count,min_trade_limit,max_trade_limit,pay_type,pay_name,landun,price) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) on duplicate key update user_name=values(user_name),trade_month_times=values(trade_month_times),order_complete_rate=values(order_complete_rate),trade_count=values(trade_count),min_trade_limit=values(min_trade_limit),max_trade_limit=values(max_trade_limit),pay_type=values(pay_type),pay_name=values(pay_name),landun=values(landun),price=values(price)'
+    sql = 'insert into otc_origin values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
     resp = db.insertmany(sql, values)
     if resp:
         print(resp)
         return
 
     totalPage = rj.get('totalPage', 1)
-    '''
     if currPage < totalPage:
-        fetch_coin(trade_type, coin_id, coin_name, currPage + 1)
+        fetch_coin(ts, trade_type, coin_id, coin_name, currPage + 1)
 
     '''
     if currPage == 1 and currPage < totalPage:
@@ -110,6 +125,7 @@ def fetch_coin(trade_type, coin_id, coin_name, currPage):
             t.start()
         for t in threads:
             t.join()
+    '''
 
 
 def fetch_proxy():
@@ -123,18 +139,15 @@ def fetch_proxy():
             proxies.append(proxy)
 
 
-def fetch_coins():
+def fetch_coins(ts):
     now = int(time.time())
-    sql = 'delete from otc_origin'
-    db.execute(sql)
-
     coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
     trade_types = ['sell', 'buy']
     threads = []
     for trade_type in trade_types:
         for coin_name, coin_id in coins.items():
-            # fetch_coin(trade_type, coin_id, coin_name, 1)
-            t = myThread(trade_type, coin_id, coin_name, 1)
+            # fetch_coin(ts, trade_type, coin_id, coin_name, 1)
+            t = myThread(ts, trade_type, coin_id, coin_name, 1)
             threads.append(t)
 
     for t in threads:
@@ -151,6 +164,12 @@ def get_profile():
     return db.query(sql)
 
 
+def delete_data():
+    ts = time.time() * 1000 - (3600 * 1000)
+    sql = "delete from otc_origin where ts <'%d'" % ts
+    db.execute(sql)
+
+
 if __name__ == '__main__':
     last_update_time = time.time() - 3600
     while True:
@@ -158,13 +177,16 @@ if __name__ == '__main__':
         if not res:
             break
         refresh_time = res[0]['refresh_time']
-        # print(refresh_time)
+        print(refresh_time)
         now_time = time.time()
         if now_time - last_update_time < refresh_time:
             continue
 
         # 更新代理
+        delete_data()
         fetch_proxy()
+        ts = str(int(time.time() * 1000))
 
         print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        fetch_coins()
+        fetch_coins(ts)
+        break

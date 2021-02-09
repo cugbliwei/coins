@@ -1,5 +1,6 @@
 drop table otc_origin;
 CREATE TABLE `otc_origin` (
+  `ts` varchar(20) NOT NULL DEFAULT '',
   `trade_type` varchar(20) NOT NULL DEFAULT '',
   `coin_name` varchar(20) NOT NULL DEFAULT '',
   `rank_cnt` int(11) NOT NULL DEFAULT 0,
@@ -12,7 +13,14 @@ CREATE TABLE `otc_origin` (
   `pay_type` varchar(50) DEFAULT NULL,
   `pay_name` varchar(50) DEFAULT NULL,
   `landun` int(11) DEFAULT 0,
-  `price` varchar(50) DEFAULT NULL
+  `price` varchar(50) DEFAULT NULL,
+  KEY `idx_ts` (`ts`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+drop table otc_ts;
+CREATE TABLE `otc_ts` (
+  `ts` varchar(20) NOT NULL DEFAULT '',
+  PRIMARY KEY (`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 drop table otc_user;
