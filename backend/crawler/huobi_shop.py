@@ -96,6 +96,7 @@ def fetch_coin(trade_type, coin_id, coin_name, currPage):
         return
 
     totalPage = rj.get('totalPage', 1)
+    '''
     if currPage < totalPage:
         fetch_coin(trade_type, coin_id, coin_name, currPage + 1)
 
@@ -109,7 +110,6 @@ def fetch_coin(trade_type, coin_id, coin_name, currPage):
             t.start()
         for t in threads:
             t.join()
-    '''
 
 
 def fetch_proxy():
@@ -130,21 +130,17 @@ def fetch_coins():
 
     coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
     trade_types = ['sell', 'buy']
-    # threads = []
+    threads = []
     for trade_type in trade_types:
         for coin_name, coin_id in coins.items():
-            fetch_coin(trade_type, coin_id, coin_name, 1)
-            '''
+            # fetch_coin(trade_type, coin_id, coin_name, 1)
             t = myThread(trade_type, coin_id, coin_name, 1)
             threads.append(t)
-            '''
 
-    '''
     for t in threads:
         t.start()
     for t in threads:
         t.join()
-    '''
 
     end = int(time.time())
     print('花费耗时:', end - now)
@@ -159,17 +155,16 @@ if __name__ == '__main__':
     last_update_time = time.time() - 3600
     while True:
         res = get_profile()
-        if not res or not res[0]:
+        if not res:
             break
-
-        # 更新代理
-        fetch_proxy()
-
-        refresh_time = res[0][0]
+        refresh_time = res[0]['refresh_time']
         # print(refresh_time)
         now_time = time.time()
         if now_time - last_update_time < refresh_time:
             continue
+
+        # 更新代理
+        fetch_proxy()
 
         print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         fetch_coins()
