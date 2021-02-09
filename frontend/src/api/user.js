@@ -8,4 +8,12 @@ export default {
       data,
     })
   },
+
+  adduser (data) {
+    return ajax({
+      url: '/otc/user/set',
+      method: 'post',
+      data,
+    })
+  }
 }

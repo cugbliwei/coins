@@ -24,4 +24,12 @@ export default {
       data,
     })
   },
+
+  api_speed (data) {
+    return ajax({
+      url: '/otc/tuntu',
+      method: 'post',
+      data,
+    })
+  },
 }

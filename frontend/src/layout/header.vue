@@ -7,16 +7,18 @@
       </div>
       <div class="tools">
         <to-edit-account v-if="nickname == 'admin'" />
-        <span class="tools-item"><i class="el-icon-error"></i>退出</span>
+        <to-add-account v-if="nickname == 'admin'" />
+        <span class="tools-item" @click="quik"><i class="el-icon-error"></i>退出</span>
       </div>
     </div>
   </div>
 </template>
 <script>
   import toEditAccount from './components/editAccount'
+  import toAddAccount from './components/addAccount'
   export default {
     components: {
-      toEditAccount
+      toEditAccount, toAddAccount
     },
     mounted () {
       
@@ -26,7 +28,10 @@
       }
     },
     methods: {
-      
+      quik () {
+        this.$store.commit("SET_NICKNAME", '');
+        this.$router.replace({name: 'login'})
+      }
     },
     computed: {
       nickname() {
