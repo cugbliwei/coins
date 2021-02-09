@@ -112,6 +112,7 @@ def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
         return
 
     totalPage = rj.get('totalPage', 1)
+    '''
     if currPage < totalPage:
         fetch_coin(ts, trade_type, coin_id, coin_name, currPage + 1)
 
@@ -119,13 +120,12 @@ def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
     if currPage == 1 and currPage < totalPage:
         threads = []
         for page_index in range(2, totalPage + 1):
-            t = myThread(trade_type, coin_id, coin_name, page_index)
+            t = myThread(ts, trade_type, coin_id, coin_name, page_index)
             threads.append(t)
         for t in threads:
             t.start()
         for t in threads:
             t.join()
-    '''
 
 
 def fetch_proxy():
