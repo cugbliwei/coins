@@ -31,7 +31,7 @@ async def otc_user_get(request):
     password = data['password']
     result = api.user_get(username, password)
     if result:
-        return web.json_response({'status': True, 'msg': '', 'nickname': result[1]})
+        return web.json_response({'status': True, 'msg': '', 'nickname': result[0]['nick_name']})
     else:
         return web.json_response({'status': False, 'msg': '查无此账号', 'nickname': ''})
 
