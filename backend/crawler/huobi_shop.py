@@ -164,6 +164,11 @@ def get_profile():
     return db.query(sql)
 
 
+def insert_ts(ts):
+    sql = "insert into otc_ts values('%s')" % ts
+    return db.execute(sql)
+
+
 def delete_data():
     ts = time.time() * 1000 - (3600 * 1000)
     sql = "delete from otc_origin where ts <'%d'" % ts
@@ -177,7 +182,7 @@ if __name__ == '__main__':
         if not res:
             break
         refresh_time = res[0]['refresh_time']
-        print(refresh_time)
+        # print(refresh_time)
         now_time = time.time()
         if now_time - last_update_time < refresh_time:
             continue
@@ -186,6 +191,7 @@ if __name__ == '__main__':
         delete_data()
         fetch_proxy()
         ts = str(int(time.time() * 1000))
+        insert_ts(ts)
 
         print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         fetch_coins(ts)
