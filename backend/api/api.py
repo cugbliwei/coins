@@ -74,7 +74,9 @@ def otc_tuntu(coin_name, number):
 
     ts2 = get_last_ts2()
     res2 = otc_tuntu_sub(coin_name, number, ts2)
-    return {'sell': res1['sell'] - res2['sell'], 'buy': res1['buy'] - res2['buy']}
+
+    sub = int(ts1) - int(ts2)
+    return {'sell': (res1['sell'] - res2['sell']) * (60 * 1000 / sub), 'buy': (res1['buy'] - res2['buy']) * (60 * 1000 / sub)}
 
 
 def otc_sumary(coin_name):
