@@ -178,21 +178,25 @@ def delete_data():
 if __name__ == '__main__':
     last_update_time = time.time() - 3600
     while True:
-        res = get_profile()
-        if not res:
-            break
-        refresh_time = res[0]['refresh_time']
-        # print(refresh_time)
-        now_time = time.time()
-        if now_time - last_update_time < refresh_time:
-            continue
+        try:
+            res = get_profile()
+            if not res:
+                break
+            refresh_time = res[0]['refresh_time']
+            # print(refresh_time)
+            now_time = time.time()
+            if now_time - last_update_time < refresh_time:
+                continue
 
-        # 更新代理
-        delete_data()
-        fetch_proxy()
-        ts = str(int(time.time() * 1000))
-        insert_ts(ts)
+            # 更新代理
+            delete_data()
+            fetch_proxy()
+            ts = str(int(time.time() * 1000))
+            insert_ts(ts)
 
-        print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        fetch_coins(ts)
-        print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            fetch_coins(ts)
+            print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        except Exception as e:
+            print(e)
+            time.sleep(3)
