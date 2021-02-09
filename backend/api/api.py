@@ -49,7 +49,8 @@ def otc_rank(coin_name, nickname):
             price = res['price']
             trade_count = res['trade_count']
             rank_cnt = res['rank_cnt']
-            ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt})
+            tuntu = otc_tuntu(coin_name, rank_cnt - 1)
+            ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt, 'entry_rank_1': tuntu[trade_type + '_origin'] / (0 - tuntu[trade_type])})
         results[trade_type] = ret
     return results
 
@@ -76,7 +77,7 @@ def otc_tuntu(coin_name, number):
     res2 = otc_tuntu_sub(coin_name, number, ts2)
 
     sub = int(ts1) - int(ts2)
-    return {'sell': (res1['sell'] - res2['sell']) * (60 * 1000 / sub), 'buy': (res1['buy'] - res2['buy']) * (60 * 1000 / sub)}
+    return {'sell': (res1['sell'] - res2['sell']) * (60 * 1000 / sub), 'buy': (res1['buy'] - res2['buy']) * (60 * 1000 / sub), 'sell_origin': res1['sell'], 'buy_origin': res1['buy']}
 
 
 def otc_sumary(coin_name):
