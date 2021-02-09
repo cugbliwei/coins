@@ -29,6 +29,14 @@ def get_last_ts():
     return ''
 
 
+def get_last_ts2():
+    sql = "select ts from otc_ts order by ts desc limit 2"
+    res = db.query(sql)
+    if len(res) > 1:
+        return res[1]['ts']
+    return ''
+
+
 def otc_rank(coin_name, nickname):
     results = {}
     ts = get_last_ts()
@@ -44,6 +52,29 @@ def otc_rank(coin_name, nickname):
             ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt})
         results[trade_type] = ret
     return results
+
+
+def otc_tuntu_sub(coin_name, number, ts):
+    res = {}
+    for trade_type in ['sell', 'buy']:
+        sql = "select sum(trade_count) as trade_count_sum from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts, trade_type, coin_name, number)
+        print(sql)
+        data = db.query(sql)
+        if data[0]['trade_count_sum']:
+            res[trade_type] = data[0]['trade_count_sum']
+        else:
+            res[trade_type] = 0
+
+    return res
+
+
+def otc_tuntu(coin_name, number):
+    ts1 = get_last_ts()
+    res1 = otc_tuntu_sub(coin_name, number, ts1)
+
+    ts2 = get_last_ts2()
+    res2 = otc_tuntu_sub(coin_name, number, ts2)
+    return {'sell': res1['sell'] - res2['sell'], 'buy': res1['buy'] - res2['buy']}
 
 
 def otc_sumary(coin_name):

@@ -56,6 +56,15 @@ async def otc_predict(request):
     return web.json_response(results)
 
 
+@routes.post('/otc/tuntu')
+async def otc_tuntu(request):
+    data = await request.post()
+    coin_name = data['coin_name']
+    number = data['number']
+    results = api.otc_tuntu(coin_name, number)
+    return web.json_response(results)
+
+
 @routes.post('/otc/sumary')
 async def otc_sumary(request):
     data = await request.post()
