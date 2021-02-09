@@ -5,7 +5,7 @@ from api import api
 routes = web.RouteTableDef()
 
 
-@routes.get('/')
+@routes.get('/health')
 async def hello(request):
     return web.Response(text="Hello, world")
 
@@ -83,6 +83,7 @@ async def otc_origin(request):
 
 def run():
     app = web.Application()
+    app.router.add_static('/', path='../dist/', name='html')
     app.router.add_routes(routes)
     web.run_app(app, port='80')
 
