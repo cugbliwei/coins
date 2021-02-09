@@ -8,34 +8,38 @@
           </el-select>
         </el-form-item>
         <el-form-item label="收款方式">
-          <el-select v-model="formInline.pay_type">
+          <el-select v-model="formInline.pay_type" clearable="">
             <el-option v-for="item in paywayList" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="自动刷新间隔">
-          <el-select v-model="formInline.autoRenew">
-            <el-option v-for="item in autoRenewList" :key="item.label" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="蓝盾">
           <el-switch v-model="formInline.landun"></el-switch>
         </el-form-item>
         <el-form-item>
           <el-button :disabled="origin_loading || summary_loading" type="primary" icon="el-icon-search" @click="search">开始查询</el-button>
         </el-form-item>
-        <!-- <el-form-item>
-          <el-button :disabled="origin_loading || summary_loading" type="danger" icon="el-icon-error">停止刷新</el-button>
-        </el-form-item> -->
       </el-form>
     </div>
     <div class="custom-tabel">
       <div class="custom-tabel-item">
-        <otc-out-summary :tableData="summary_out" :loading="summary_loading" />
-        <otc-out :tableData="origin_out" :loading="origin_loading" />
+        <otc-out-summary 
+          :tableData="summary_out" 
+          :loading="summary_loading" 
+          :out-rank-data="outRankData"
+          :rankLoading="rank_loading" />
+        <otc-out 
+          :tableData="origin_out" 
+          :loading="origin_loading" />
       </div>
       <div class="custom-tabel-item">
-        <otc-in-summary :tableData="summary_in" :loading="summary_loading" />
-        <otc-in :tableData="origin_in" :loading="origin_loading" />
+        <otc-in-summary 
+          :tableData="summary_in" 
+          :loading="summary_loading" 
+          :in-rank-data="inRankData"
+          :rankLoading="rank_loading" />
+        <otc-in 
+          :tableData="origin_in" 
+          :loading="origin_loading" />
       </div>
     </div>
   </div>
@@ -51,10 +55,16 @@ export default {
   components: {
     otcOut, otcOutSummary, otcIn, otcInSummary
   },
+  computed: {
+    nickname() {
+      return this.$store.getters.GTE_NICKNAME;
+    },
+  },
   data () {
     return {
       origin_loading: false,
       summary_loading: false,
+      rank_loading: false,
       coin_list: [
         { label: 'USDT', value: 'USDT'},
         { label: 'BTC', value: 'BTC'},
@@ -80,6 +90,8 @@ export default {
       origin_out: [],
       summary_in: [],
       origin_in: [],
+      outRankData: [],
+      inRankData: [],
       formInline: {
         coin_name: '',
         pay_type: '',
@@ -94,14 +106,36 @@ export default {
       form.append('coin_name', this.formInline.coin_name)
       form.append('landun', this.formInline.landun ? 1 : 0)
       form.append('pay_type', this.formInline.pay_type)
+      form.append('nickname', this.nickname)
       this.origin_loading = true;
       this.summary_loading = true;
+      this.rank_loading = true;
       this.summary_out = [];
       this.origin_out = [];
       this.summary_in = [];
       this.origin_in = [];
+      this.outRankData = [];
+      this.inRankData = [];
       this.getOringin(form);
       this.getSummary(form);
+      this.getRank(form);
+    },
+    getRank (form) {
+      api.api_rank(form).then(res => {
+        if (res.data.buy) {
+          this.inRankData = res.data.buy
+        }
+        if (res.data.sell) {
+          this.outRankData = res.data.sell
+        }
+        this.rank_loading = false;
+      }).catch(err => {
+        this.$message({
+          message: '查询排名数据失败',
+          type: 'warning'
+        })
+        this.rank_loading = false;
+      })
     },
     getSummary (form) {
       api.api_sumary(form).then(res => {

@@ -2,10 +2,10 @@
   <div class="tab-col">
     <div class="tab-title">OTC买入</div>
     <div class="tab-containt">
-      <el-table :data="tableSummary" border style="width: 100%" height="100">
-        <el-table-column prop="company" label="我的金额"></el-table-column>
-        <el-table-column prop="number" label="数量"></el-table-column>
-        <el-table-column prop="month" label="我的排名"></el-table-column>
+      <el-table :data="outRankData" border style="width: 100%" height="100" v-loading="rankLoading">
+        <el-table-column prop="price" label="我的金额"></el-table-column>
+        <el-table-column prop="trade_count" label="数量"></el-table-column>
+        <el-table-column prop="rank_cnt" label="我的排名"></el-table-column>
         <el-table-column prop="number" label="前10预计"></el-table-column>
       </el-table>
       <div class="tab-title">
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  props: ['tableData', 'tableSummary', 'loading'],
+  props: ['tableData', 'tableSummary', 'loading', 'rankLoading', 'outRankData'],
 }
 </script>
 

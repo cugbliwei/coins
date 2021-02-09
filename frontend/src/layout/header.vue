@@ -3,60 +3,35 @@
     <div class="nav">
       <div class="logo">
         <i class="logo-icon">BIT</i>
-        WELCOME
+        WELCOME | {{nickname}}
       </div>
       <div class="tools">
-        <span class="tools-item" @click="toEditAccount"><i class="el-icon-edit"></i>修改账号信息</span>
+        <to-edit-account v-if="nickname == 'admin'" />
         <span class="tools-item"><i class="el-icon-error"></i>退出</span>
       </div>
     </div>
-    <!--修改账号弹窗-->
-    <el-dialog
-      title="修改账号信息"
-      :visible.sync="dialogVisible"
-      width="50%">
-      <el-form label-width="80px" :model="formObj">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="账号名">
-              <el-input v-model="formObj.account"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="密码">
-              <el-input v-model="formObj.password"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">保 存</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
+  import toEditAccount from './components/editAccount'
   export default {
+    components: {
+      toEditAccount
+    },
     mounted () {
       
     },
     data () {
       return {
-        dialogVisible: false,
-        formObj: {
-          account: '',
-          password: '',
-        }
       }
     },
     methods: {
-      toEditAccount () {
-        this.dialogVisible = true
-      },
+      
     },
     computed: {
-      
+      nickname() {
+        return this.$store.getters.GTE_NICKNAME;
+      },
     },
   };
 </script>

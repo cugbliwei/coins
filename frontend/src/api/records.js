@@ -15,5 +15,13 @@ export default {
       method: 'post',
       data,
     })
-  } 
+  },
+
+  api_rank (data) {
+    return ajax({
+      url: '/otc/rank',
+      method: 'post',
+      data,
+    })
+  },
 }

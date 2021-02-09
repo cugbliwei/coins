@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+import store from '@/store/index'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,14 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (!store.getters.GTE_NICKNAME && to.name != 'login') {
+    next({name: 'login'})
+  } else {
+    next()
+  }
 })
 
 export default router
