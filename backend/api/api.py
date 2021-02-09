@@ -4,9 +4,10 @@ from db import db
 
 
 def user_set(username, password, nickname, token):
-    sql = "insert into otc_user values('%s', '%s', '%s', '%s')" % (username, nickname, password, token)
+    data = [(username, nickname, password, token)]
+    sql = "insert into otc_user values(%s,%s,%s,%s)"
     print(sql)
-    return db.insertmany(sql)
+    return db.insertmany(sql, data)
 
 
 def user_get(username, password):
