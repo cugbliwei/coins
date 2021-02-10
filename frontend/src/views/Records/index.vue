@@ -34,7 +34,7 @@
             type="primary" 
             icon="el-icon-search"
             @click="search">
-            开始查询
+            {{formInline.autorenew > 0 ? '自动刷新' : '开始查询'}}
           </el-button>
           <el-button 
             v-show="autorenewStatu" 
