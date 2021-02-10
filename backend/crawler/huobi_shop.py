@@ -130,13 +130,9 @@ def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
 
 def fetch_proxy():
     global proxies
-    link = 'http://napi.zhuzhaiip.com:9999/iplist?passageId=1358420123979214850&num=200&protocol=2&province=&city=&minute=1&format=2&split=&splitChar=&dedupe=1&secret=0ejgaW'
+    link = 'http://dps.kdlapi.com/api/getdps/?orderid=961286415176664&num=200&pt=1&format=json&sep=1'
     rj = requests.get(link, headers=headers).json()
-    proxies = []
-    for res in rj.get('data', []):
-        proxy = res.get('ip', '') + ':' + res.get('port', '')
-        if proxy:
-            proxies.append(proxy)
+    proxies = rj.get('data', {}).get('proxy_list', [])
 
 
 def fetch_coins(ts):
