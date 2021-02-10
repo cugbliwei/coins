@@ -1,4 +1,5 @@
 import requests
+import traceback
 import threading
 import random
 import time
@@ -73,6 +74,7 @@ def request(link):
             return True, rj
         except Exception as e:
             err = e
+            traceback.print_exc()
     print(err)
     return False, {}
 
@@ -142,6 +144,7 @@ def fetch_proxy():
         proxies = rj.get('data', {}).get('proxy_list', [])
     except Exception as e:
         print(e)
+        traceback.print_exc()
 
 
 def fetch_coins(ts):
@@ -205,4 +208,5 @@ if __name__ == '__main__':
             print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         except Exception as e:
             print(e)
+            traceback.print_exc()
             time.sleep(3)
