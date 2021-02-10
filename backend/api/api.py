@@ -65,7 +65,7 @@ def otc_rank(coin_name, nickname):
 def otc_tuntu_sub(coin_name, number, ts):
     res = {}
     for trade_type in ['sell', 'buy']:
-        sql = "select sum(trade_count) as trade_count_sum from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts, trade_type, coin_name, number)
+        sql = "select sum(trade_count) as trade_count_sum from (select sum(trade_count) from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s) a" % (ts, trade_type, coin_name, number)
         print(sql)
         data = db.query(sql)
         if data[0]['trade_count_sum']:
