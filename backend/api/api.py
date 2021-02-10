@@ -60,7 +60,11 @@ def otc_rank(coin_name, nickname):
             trade_count = res['trade_count']
             rank_cnt = res['rank_cnt']
             tuntu = otc_tuntu(coin_name, rank_cnt - 1)
-            ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt, 'entry_rank_1': tuntu[trade_type + '_origin'] / (0 - tuntu[trade_type])})
+            if tuntu[trade_type] == 0:
+                entry_rank_1 = 0
+            else:
+                entry_rank_1 = tuntu[trade_type + '_origin'] / (0 - tuntu[trade_type])
+            ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt, 'entry_rank_1': entry_rank_1})
         results[trade_type] = ret
     return results
 
