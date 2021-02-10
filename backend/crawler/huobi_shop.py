@@ -40,6 +40,8 @@ proxies = []
 
 def get_proxy():
     global proxies
+    if len(proxies) == 0:
+        return {}
     rd = random.randint(0, len(proxies) - 1)
     proxy = proxies[rd]
     ps = {'http': 'http://' + proxy, 'https': 'http://' + proxy}
@@ -62,8 +64,12 @@ class myThread(threading.Thread):
 def request(link):
     err = ''
     for i in range(5):
+        now_proxy = get_proxy()
         try:
-            rj = requests.get(link, headers=headers, proxies=get_proxy(), timeout=5).json()
+            if now_proxy:
+                rj = requests.get(link, headers=headers, proxies=now_proxy, timeout=5).json()
+            else:
+                rj = requests.get(link, headers=headers, timeout=5).json()
             return True, rj
         except Exception as e:
             err = e
@@ -130,9 +136,12 @@ def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
 
 def fetch_proxy():
     global proxies
-    link = 'http://dps.kdlapi.com/api/getdps/?orderid=961286415176664&num=200&pt=1&format=json&sep=1'
-    rj = requests.get(link, headers=headers).json()
-    proxies = rj.get('data', {}).get('proxy_list', [])
+    try:
+        link = 'http://dps.kdlapi.com/api/getdps/?orderid=961286415176664&num=200&pt=1&format=json&sep=1'
+        rj = requests.get(link, headers=headers).json()
+        proxies = rj.get('data', {}).get('proxy_list', [])
+    except Exception as e:
+        print(e)
 
 
 def fetch_coins(ts):
