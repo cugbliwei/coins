@@ -44,7 +44,6 @@
             取消自动刷新
           </el-button>
         </el-form-item>
-
       </el-form>
     </div>
     <div class="custom-tabel">
@@ -168,26 +167,17 @@ export default {
       form.append('pay_type', this.formInline.pay_type)
       form.append('nickname', this.nickname)
       form.append('number', this.formInline.number)
-      this.summary_out = [];
       this.origin_out = [];
-      this.summary_in = [];
       this.origin_in = [];
-      this.outRankData = [];
-      this.inRankData = [];
-      this.speed_in = 0;
-      this.speed_out = 0;
-      this.getRank(form);
-      this.getSpeed(form);
-      this.getSummary(form);
       this.getOringin(form);
     },
     getSpeed (form) {
       api.api_speed(form).then(res => {
         if (res.data.buy) {
-          this.speed_in = res.data.buy
+          this.speed_in = res.data.buy || 0
         }
         if (res.data.sell) {
-          this.speed_out = res.data.sell
+          this.speed_out = res.data.sell || 0
         }
       }).catch(err => {
         this.$message({
@@ -205,7 +195,9 @@ export default {
         if (res.data.sell) {
           this.outRankData = res.data.sell
         }
-        this.rank_loading = false;
+        this.$nextTick(() => {
+          this.rank_loading = false;
+        })
       }).catch(err => {
         this.$message({
           message: '查询排名数据失败',
@@ -223,7 +215,9 @@ export default {
         if (res.data.sell) {
           this.summary_out = res.data.sell
         }
-        this.summary_loading = false;
+        this.$nextTick(() => {
+          this.summary_loading = false;
+        })
       }).catch(err => {
         this.$message({
           message: '查询汇总数据失败',
@@ -241,7 +235,12 @@ export default {
         if (res.data.sell) {
           this.origin_out = res.data.sell
         }
-        this.origin_loading = false;
+        this.getRank(form);
+        this.getSpeed(form);
+        this.getSummary(form);
+        this.$nextTick(() => {
+          this.origin_loading = false;
+        })
       }).catch(err => {
         this.$message({
           message: '查询源数据失败',

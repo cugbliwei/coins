@@ -15,5 +15,13 @@ export default {
       method: 'post',
       data,
     })
+  },
+
+  updateuser (data) {
+    return ajax({
+      url: '/otc/user/update',
+      method: 'post',
+      data,
+    })
   }
 }
