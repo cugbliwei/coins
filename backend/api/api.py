@@ -17,7 +17,7 @@ def user_get(username, password):
 
 
 def user_update(username, password, nickname):
-    sql = "update otc_user set password='%s' and nick_name='%s' where user_name='%s'" % (password, nickname, username)
+    sql = "update otc_user set password='%s',nick_name='%s' where user_name='%s'" % (password, nickname, username)
     print(sql)
     return db.execute(sql)
 
