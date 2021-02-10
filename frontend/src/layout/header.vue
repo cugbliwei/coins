@@ -6,8 +6,8 @@
         WELCOME
       </div>
       <div class="tools">
-        <to-edit-account v-if="nickname == 'admin'" />
-        <to-add-account v-if="nickname == 'admin'" />
+        <to-edit-account v-if="username == 'admin'" />
+        <to-add-account v-if="username == 'admin'" />
         <span class="tools-item" @click="quik"><i class="el-icon-error"></i>退出</span>
       </div>
     </div>
@@ -34,8 +34,8 @@
       }
     },
     computed: {
-      nickname() {
-        return this.$store.getters.GTE_NICKNAME;
+      username() {
+        return this.$store.getters.GTE_USERNAME;
       },
     },
   };

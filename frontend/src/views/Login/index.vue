@@ -48,6 +48,7 @@ export default {
           })
         } else {
           this.$store.commit("SET_NICKNAME", res.data.nickname);
+          this.$store.commit("SET_USERNAME", this.username);
           this.$router.replace({name: 'records'})
         }
       }).catch(err => {
