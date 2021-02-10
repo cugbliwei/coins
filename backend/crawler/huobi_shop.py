@@ -146,7 +146,8 @@ def fetch_proxy():
 
 def fetch_coins(ts):
     now = int(time.time())
-    coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
+    # coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
+    coins = {'USDT': '2'}
     trade_types = ['sell', 'buy']
     threads = []
     for trade_type in trade_types:
