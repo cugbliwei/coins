@@ -168,9 +168,6 @@ export default {
       form.append('pay_type', this.formInline.pay_type)
       form.append('nickname', this.nickname)
       form.append('number', this.formInline.number)
-      this.origin_loading = true;
-      this.summary_loading = true;
-      this.rank_loading = true;
       this.summary_out = [];
       this.origin_out = [];
       this.summary_in = [];
@@ -179,10 +176,10 @@ export default {
       this.inRankData = [];
       this.speed_in = 0;
       this.speed_out = 0;
-      this.getOringin(form);
-      this.getSummary(form);
       this.getRank(form);
       this.getSpeed(form);
+      this.getSummary(form);
+      this.getOringin(form);
     },
     getSpeed (form) {
       api.api_speed(form).then(res => {
@@ -200,6 +197,7 @@ export default {
       })
     },
     getRank (form) {
+      this.rank_loading = true;
       api.api_rank(form).then(res => {
         if (res.data.buy) {
           this.inRankData = res.data.buy
@@ -217,6 +215,7 @@ export default {
       })
     },
     getSummary (form) {
+      this.summary_loading = true;
       api.api_sumary(form).then(res => {
         if (res.data.buy) {
           this.summary_in = res.data.buy
@@ -234,6 +233,7 @@ export default {
       })
     },
     getOringin (form) {
+      this.origin_loading = true;
       api.api_origin(form).then(res => {
         if (res.data.buy) {
           this.origin_in = res.data.buy
