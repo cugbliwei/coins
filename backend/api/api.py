@@ -47,6 +47,9 @@ def get_last_ts2():
 def otc_rank(coin_name, nickname):
     results = {}
     ts = get_last_ts()
+    if not ts:
+        return {}
+
     for trade_type in ['sell', 'buy']:
         sql = "select price,trade_count,rank_cnt from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' and user_name='%s'" % (ts, trade_type, coin_name, nickname)
         print(sql)
@@ -78,9 +81,15 @@ def otc_tuntu_sub(coin_name, number, ts):
 
 def otc_tuntu(coin_name, number):
     ts1 = get_last_ts()
+    if not ts1:
+        return {}
+
     res1 = otc_tuntu_sub(coin_name, number, ts1)
 
     ts2 = get_last_ts2()
+    if not ts2:
+        return {}
+
     res2 = otc_tuntu_sub(coin_name, number, ts2)
 
     sub = int(ts1) - int(ts2)
@@ -90,6 +99,9 @@ def otc_tuntu(coin_name, number):
 def otc_sumary(coin_name):
     results = {}
     ts = get_last_ts()
+    if not ts:
+        return {}
+
     for trade_type in ['sell', 'buy']:
         sql = "select price,count(*) as price_cnt,avg(trade_count) as trade_count_avg,sum(trade_count) as trade_count_sum from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' group by price" % (ts, trade_type, coin_name)
         print(sql)
@@ -108,6 +120,9 @@ def otc_sumary(coin_name):
 def get_origin(coin_name):
     results = {}
     ts = get_last_ts()
+    if not ts:
+        return {}
+
     for trade_type in ['sell', 'buy']:
         sql = "select * from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt" % (ts, trade_type, coin_name)
         print(sql)
