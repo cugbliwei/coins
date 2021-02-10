@@ -3,26 +3,48 @@
     <div class="condition">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="币种">
-          <el-select v-model="formInline.coin_name">
+          <el-select v-model="formInline.coin_name" :disabled="autorenewStatu">
             <el-option v-for="item in coin_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="收款方式">
-          <el-select v-model="formInline.pay_type" clearable>
+          <el-select v-model="formInline.pay_type" clearable :disabled="autorenewStatu">
             <el-option v-for="item in paywayList" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="吞吐量">
-          <el-select v-model="formInline.number" clearable>
+          <el-select v-model="formInline.number" clearable :disabled="autorenewStatu">
             <el-option v-for="item in speedList" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="自动刷新">
+          <el-select v-model="formInline.autorenew" :disabled="autorenewStatu">
+            <el-option label="10秒" :value="10"></el-option>
+            <el-option label="5秒" :value="5"></el-option>
+            <el-option label="关闭自动刷新" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="蓝盾">
-          <el-switch v-model="formInline.landun"></el-switch>
+          <el-switch v-model="formInline.landun" :disabled="autorenewStatu"></el-switch>
         </el-form-item>
         <el-form-item>
-          <el-button :disabled="origin_loading || summary_loading" type="primary" icon="el-icon-search" @click="search">开始查询</el-button>
+          <el-button 
+            v-show="!autorenewStatu" 
+            :disabled="origin_loading || summary_loading" 
+            type="primary" 
+            icon="el-icon-search"
+            @click="search">
+            开始查询
+          </el-button>
+          <el-button 
+            v-show="autorenewStatu" 
+            type="danger" 
+            icon="el-icon-error" 
+            @click="stopAuto">
+            取消自动刷新
+          </el-button>
         </el-form-item>
+
       </el-form>
     </div>
     <div class="custom-tabel">
@@ -32,7 +54,8 @@
           :loading="summary_loading" 
           :out-rank-data="outRankData"
           :rankLoading="rank_loading"
-          :speed-out="speed_out" />
+          :speed-out="speed_out"
+          :autorenew-statu="autorenewStatu" />
         <otc-out 
           :tableData="origin_out" 
           :loading="origin_loading" />
@@ -43,7 +66,8 @@
           :loading="summary_loading" 
           :in-rank-data="inRankData"
           :rankLoading="rank_loading"
-          :speed-in="speed_in" />
+          :speed-in="speed_in"
+          :autorenew-statu="autorenewStatu" />
         <otc-in 
           :tableData="origin_in" 
           :loading="origin_loading" />
@@ -102,9 +126,9 @@ export default {
       formInline: {
         coin_name: 'USDT',
         pay_type: '',
-        autoRenew: '',
         landun: false,
         number: 10,
+        autorenew: 0,
       },
       speedList: [
         {label: '10行', value: 10},
@@ -115,10 +139,29 @@ export default {
       ],
       speed_in: 0,
       speed_out: 0,
+      autorenewObj: null,
+      autorenewStatu: false,
     }
   },
   methods: {
+    stopAuto () {
+      clearInterval(this.autorenewObj);
+      this.autorenewStatu = false;
+      this.formInline.autorenew = 0;
+    },
     search () {
+      if (this.formInline.autorenew > 0) {
+        this.toSearch();
+        this.autorenewStatu = true;
+        this.autorenewObj = setInterval(() => {
+          let loaded = this.origin_loading == false && this.summary_loading == false && this.rank_loading == false;
+          loaded && this.toSearch();
+        }, this.formInline.autorenew * 1000);
+      } else {
+        this.toSearch();
+      }
+    },
+    toSearch () {
       let form = new FormData();
       form.append('coin_name', this.formInline.coin_name)
       form.append('landun', this.formInline.landun ? 1 : 0)
