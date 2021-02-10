@@ -68,7 +68,7 @@ def otc_tuntu_sub(coin_name, number, ts):
         sql = "select sum(trade_count) as trade_count_sum from (select sum(trade_count) from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s) a" % (ts, trade_type, coin_name, number)
         print(sql)
         data = db.query(sql)
-        if data[0]['trade_count_sum']:
+        if data and data[0]['trade_count_sum']:
             res[trade_type] = data[0]['trade_count_sum']
         else:
             res[trade_type] = 0
