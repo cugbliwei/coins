@@ -29,7 +29,7 @@ def set_profile(refresh_time):
 
 
 def get_last_ts():
-    sql = "select max(ts) from otc_origin"
+    sql = "select max(ts) as ts from otc_origin"
     res = db.query(sql)
     if res:
         return res[0]['ts']
