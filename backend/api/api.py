@@ -29,7 +29,7 @@ def set_profile(refresh_time):
 
 
 def get_last_ts():
-    sql = "select ts from otc_ts order by ts desc limit 1"
+    sql = "select max(ts) from otc_origin"
     res = db.query(sql)
     if res:
         return res[0]['ts']
@@ -37,7 +37,7 @@ def get_last_ts():
 
 
 def get_last_ts2():
-    sql = "select ts from otc_ts order by ts desc limit 2"
+    sql = "select ts from (select ts from otc_origin group by ts) a order by ts desc limit 2"
     res = db.query(sql)
     if len(res) > 1:
         return res[1]['ts']
