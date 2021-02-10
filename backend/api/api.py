@@ -16,6 +16,12 @@ def user_get(username, password):
     return db.query(sql)
 
 
+def user_update(username, password, nickname):
+    sql = "update otc_user set password='%s' and nick_name='%s' where user_name='%s'" % (password, nickname, username)
+    print(sql)
+    return db.execute(sql)
+
+
 def set_profile(refresh_time):
     sql = "update otc_profile set refresh_time=%s" % refresh_time
     print(sql)
