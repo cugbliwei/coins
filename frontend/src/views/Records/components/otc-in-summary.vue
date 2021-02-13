@@ -5,8 +5,12 @@
       <el-table :data="rankData" border style="width: 100%" height="100" v-loading="rankLoading">
         <el-table-column prop="price" label="我的金额"></el-table-column>
         <el-table-column prop="trade_count" label="数量"></el-table-column>
-        <el-table-column prop="rank_cnt" label="我的排名"></el-table-column>
-        <el-table-column prop="rank_time">
+        <el-table-column prop="rank_cnt" label="我的排名">
+          <template slot-scope="scope">
+            <span style="font-weight: bold; color: red;">{{scope.row.rank_cnt}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="rank_time" width="250">
           <template slot="header" slot-scope="scope">
             名次耗时预估(分钟)
             <select name="grade" id="grade" v-model="grade" :disabled="autorenewStatu">
@@ -24,7 +28,11 @@
       </div>
       <el-table :data="tableData" border style="width: 100%" height="200" v-loading="loading">
         <el-table-column prop="price" label="汇总单价"></el-table-column>
-        <el-table-column prop="price_cnt" label="单价数量"></el-table-column>
+        <el-table-column prop="price_cnt" label="单价数量">
+          <template slot-scope="scope">
+            <span style="font-weight: bold; color: red;">{{scope.row.price_cnt}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="trade_count_sum" label="总币数"></el-table-column>
         <el-table-column prop="trade_count_avg" label="平均币数"></el-table-column>
       </el-table>

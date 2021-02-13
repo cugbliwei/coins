@@ -18,11 +18,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="自动刷新">
-          <el-select v-model="formInline.autorenew" :disabled="autorenewStatu">
-            <el-option label="10秒" :value="10"></el-option>
-            <el-option label="5秒" :value="5"></el-option>
-            <el-option label="关闭自动刷新" :value="0"></el-option>
-          </el-select>
+          <el-switch v-model="formInline.autorenew" :disabled="autorenewStatu"></el-switch>
         </el-form-item>
         <el-form-item label="蓝盾">
           <el-switch v-model="formInline.landun" :disabled="autorenewStatu"></el-switch>
@@ -110,12 +106,6 @@ export default {
         { label: '微信', value: '2'},
         { label: '支付宝', value: '3'},
       ],
-      autoRenewList: [
-        { label: '10秒', value: 10},
-        { label: '20秒', value: 20},
-        { label: '30秒', value: 30},
-        { label: '不自动刷新', value: -1},
-      ],
       summary_out: [],
       origin_out: [],
       summary_in: [],
@@ -124,10 +114,10 @@ export default {
       inRankData: [],
       formInline: {
         coin_name: 'USDT',
-        pay_type: '',
+        pay_type: '2',
         landun: false,
         number: 10,
-        autorenew: 0,
+        autorenew: false,
       },
       speedList: [
         {label: '10行', value: 10},
@@ -146,16 +136,16 @@ export default {
     stopAuto () {
       clearInterval(this.autorenewObj);
       this.autorenewStatu = false;
-      this.formInline.autorenew = 0;
+      this.formInline.autorenew = false;
     },
     search () {
-      if (this.formInline.autorenew > 0) {
+      if (this.formInline.autorenew == true) {
         this.toSearch();
         this.autorenewStatu = true;
         this.autorenewObj = setInterval(() => {
           let loaded = this.origin_loading == false && this.summary_loading == false && this.rank_loading == false;
           loaded && this.toSearch();
-        }, this.formInline.autorenew * 1000);
+        }, 5 * 1000);
       } else {
         this.toSearch();
       }
@@ -173,12 +163,8 @@ export default {
     },
     getSpeed (form) {
       api.api_speed(form).then(res => {
-        if (res.data.buy) {
-          this.speed_in = res.data.buy || 0
-        }
-        if (res.data.sell) {
-          this.speed_out = res.data.sell || 0
-        }
+        this.speed_in = res.data.buy;
+        this.speed_out = res.data.sell;
       }).catch(err => {
         this.$message({
           message: '查询吞吐量数据失败',
@@ -302,5 +288,12 @@ export default {
     font-size: 12px;
     color: #ff6a00;
     margin-left: 20px;
+  }
+  .el-table {
+    font-size: 14px;
+  }
+  .font {
+    font-weight: bold; 
+    color: red;
   }
 </style>

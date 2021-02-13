@@ -3,7 +3,7 @@
     <div class="nav">
       <div class="logo">
         <i class="logo-icon">BIT</i>
-        WELCOME
+        WELCOME, {{username}}
       </div>
       <div class="tools">
         <to-edit-account v-if="username == 'admin'" />

@@ -10,7 +10,11 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="user_name" label="广告方"></el-table-column>
+        <el-table-column prop="user_name" label="广告方">
+          <template slot-scope="scope">
+            <span :class="{'font': scope.row.user_name == nickname}">{{scope.row.user_name}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="trade_month_times" label="月报"></el-table-column>
         <el-table-column prop="order_complete_rate" label="完成率"></el-table-column>
         <el-table-column prop="trade_count" label="数量"></el-table-column>
@@ -30,6 +34,11 @@
 <script>
 export default {
   props: ['tableData', 'loading'],
+  computed: {
+    nickname() {
+      return this.$store.getters.GTE_NICKNAME;
+    },
+  },
 }
 </script>
 
