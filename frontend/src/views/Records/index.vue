@@ -68,6 +68,14 @@
           :loading="origin_loading" />
       </div>
     </div>
+    <div>
+      <audio 
+        v-for="(item, index) in audioList" 
+        :src="item" 
+        :key="index" 
+        preload 
+        ref="audioActive"></audio>
+    </div>
   </div>
 </template>
 
@@ -77,6 +85,12 @@ import otcOutSummary from './components/otc-out-summary'
 import otcIn from './components/otc-in'
 import otcInSummary from './components/otc-in-summary'
 import api from '@/api/records'
+import sound_1 from '@/assets/sound/01.mp3'
+import sound_2 from '@/assets/sound/02.mp3'
+import sound_3 from '@/assets/sound/03.mp3'
+import sound_4 from '@/assets/sound/04.mp3'
+import sound_5 from '@/assets/sound/05.mp3'
+import sound_6 from '@/assets/sound/06.mp3'
 export default {
   components: {
     otcOut, otcOutSummary, otcIn, otcInSummary
@@ -91,6 +105,9 @@ export default {
       origin_loading: false,
       summary_loading: false,
       rank_loading: false,
+      audioList: [sound_1, sound_2, sound_3, sound_4, sound_5, sound_6],
+      audioTeam: [0,1,3],
+      audioActive: 0,
       coin_list: [
         { label: 'USDT', value: 'USDT'},
         { label: 'BTC', value: 'BTC'},
@@ -175,12 +192,38 @@ export default {
     getRank (form) {
       this.rank_loading = true;
       api.api_rank(form).then(res => {
-        if (res.data.buy) {
-          this.inRankData = res.data.buy
+        this.inRankData = res.data.buy || [];
+        this.outRankData = res.data.sell || [];
+        
+        // 语音提示 开始
+        let rank_data = sessionStorage.getItem('rank_data')
+        let rank_data_source = {
+          rank_buy_20: res.data.buy.map(item => {
+            return item.rank_cnt <= 20
+          }).length > 0,
+          rank_buy_10: res.data.buy.map(item => {
+            return item.rank_cnt <= 10
+          }).length > 0,
+          rank_sell_20: res.data.sell.map(item => {
+            return item.rank_cnt <= 20
+          }).length > 0,
+          rank_sell_10: res.data.sell.map(item => {
+            return item.rank_cnt <= 10
+          }).length > 0,
         }
-        if (res.data.sell) {
-          this.outRankData = res.data.sell
+        if (!rank_data) {
+          if (rank_data_source.rank_sell_20 == true) this.$refs.audioActive[0].play();
+          if (rank_data_source.rank_sell_10 == true) this.$refs.audioActive[1].play();
+          if (rank_data_source.rank_buy_20 == true) this.$refs.audioActive[2].play();
+          if (rank_data_source.rank_buy_10 == true) this.$refs.audioActive[3].play();
+        } else {
+          if (rank_data_source.rank_sell_20 == true && rank_data.rank_sell_20 == false) this.$refs.audioActive[0].play();
+          if (rank_data_source.rank_sell_10 == true && rank_data.rank_sell_10 == false) this.$refs.audioActive[1].play();
+          if (rank_data_source.rank_buy_20 == true && rank_data.rank_buy_20 == false) this.$refs.audioActive[2].play();
+          if (rank_data_source.rank_buy_10 == true && rank_data.rank_buy_10 == false) this.$refs.audioActive[3].play();
         }
+        sessionStorage.setItem('rank_data', rank_data_source)
+        // 语音提示 结束
         this.$nextTick(() => {
           this.rank_loading = false;
         })
@@ -201,6 +244,23 @@ export default {
         if (res.data.sell) {
           this.summary_out = res.data.sell
         }
+
+        // 语音提示 开始
+        let summary_data = sessionStorage.getItem('rank_data')
+        let summary_data_source = {
+          summary_buy_10: res.data.buy[0].price_cnt > 10,
+          summary_sell_10: res.data.sell[0].price_cnt > 10,
+        }
+        if (!summary_data) {
+          if (summary_data_source.summary_sell_10 == true) this.$refs.audioActive[4].play();
+          if (summary_data_source.summary_buy_10 == true) this.$refs.audioActive[5].play();
+        } else {
+          if (summary_data_source.rank_sell_20 == true && summary_data.rank_sell_20 == false) this.$refs.audioActive[0].play();
+          if (summary_data_source.rank_sell_10 == true && summary_data.rank_sell_10 == false) this.$refs.audioActive[1].play();
+        }
+        sessionStorage.setItem('summary_data', summary_data_source)
+        // 语音提示 结束
+
         this.$nextTick(() => {
           this.summary_loading = false;
         })
