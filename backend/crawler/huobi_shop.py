@@ -153,17 +153,21 @@ def fetch_coins(ts):
     # coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
     coins = {'USDT': '2'}
     trade_types = ['sell', 'buy']
-    threads = []
+    # threads = []
     for trade_type in trade_types:
         for coin_name, coin_id in coins.items():
-            # fetch_coin(ts, trade_type, coin_id, coin_name, 1)
+            fetch_coin(ts, trade_type, coin_id, coin_name, 1)
+            '''
             t = myThread(ts, trade_type, coin_id, coin_name, 1)
             threads.append(t)
+            '''
 
+    '''
     for t in threads:
         t.start()
     for t in threads:
         t.join()
+    '''
 
     end = int(time.time())
     print('花费耗时:', end - now)
@@ -175,7 +179,7 @@ def get_profile():
 
 
 def insert_ts(ts):
-    sql = "insert into otc_ts values('%s')" % ts
+    sql = "insert into otc_ts values('%s',1)" % ts
     return db.execute(sql)
 
 
@@ -200,12 +204,12 @@ if __name__ == '__main__':
 
             # 更新代理
             delete_data()
-            fetch_proxy()
+            # fetch_proxy()
             ts = str(int(time.time() * 1000))
-            insert_ts(ts)
 
             print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             fetch_coins(ts)
+            insert_ts(ts)
             print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         except Exception as e:
             print(e)

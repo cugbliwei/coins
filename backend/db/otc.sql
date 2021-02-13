@@ -20,6 +20,7 @@ CREATE TABLE `otc_origin` (
 drop table otc_ts;
 CREATE TABLE `otc_ts` (
   `ts` varchar(20) NOT NULL DEFAULT '',
+  `finish` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
