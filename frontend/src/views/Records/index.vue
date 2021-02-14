@@ -138,10 +138,8 @@ export default {
       },
       speedList: [
         {label: '10行', value: 10},
-        {label: '30行', value: 30},
-        {label: '50行', value: 50},
-        {label: '80行', value: 80},
-        {label: '100行', value: 100},
+        {label: '15行', value: 15},
+        {label: '20行', value: 20},
       ],
       speed_in: 0,
       speed_out: 0,
@@ -196,33 +194,27 @@ export default {
         this.outRankData = res.data.sell || [];
         
         // 语音提示 开始
-        let rank_data = sessionStorage.getItem('rank_data')
+        let rank_data_str = sessionStorage.getItem('rank_data');
+        let rank_data = {};
         let rank_data_source = {
-          rank_buy_20: res.data.buy.map(item => {
-            return item.rank_cnt <= 20
-          }).length > 0,
-          rank_buy_10: res.data.buy.map(item => {
-            return item.rank_cnt <= 10
-          }).length > 0,
-          rank_sell_20: res.data.sell.map(item => {
-            return item.rank_cnt <= 20
-          }).length > 0,
-          rank_sell_10: res.data.sell.map(item => {
-            return item.rank_cnt <= 10
-          }).length > 0,
-        }
-        if (!rank_data) {
+          rank_buy_20: !!res.data.buy.find(item => item.rank_cnt <= 20),
+          rank_buy_10: !!res.data.buy.find(item => item.rank_cnt <= 10),
+          rank_sell_20: !!res.data.sell.find(item => item.rank_cnt <= 20),
+          rank_sell_10: !!res.data.sell.find(item => item.rank_cnt <= 10),
+        };
+        if (!rank_data_str) {
           if (rank_data_source.rank_sell_20 == true) this.$refs.audioActive[0].play();
           if (rank_data_source.rank_sell_10 == true) this.$refs.audioActive[1].play();
           if (rank_data_source.rank_buy_20 == true) this.$refs.audioActive[2].play();
           if (rank_data_source.rank_buy_10 == true) this.$refs.audioActive[3].play();
         } else {
+          rank_data = JSON.parse(rank_data_str)
           if (rank_data_source.rank_sell_20 == true && rank_data.rank_sell_20 == false) this.$refs.audioActive[0].play();
           if (rank_data_source.rank_sell_10 == true && rank_data.rank_sell_10 == false) this.$refs.audioActive[1].play();
           if (rank_data_source.rank_buy_20 == true && rank_data.rank_buy_20 == false) this.$refs.audioActive[2].play();
           if (rank_data_source.rank_buy_10 == true && rank_data.rank_buy_10 == false) this.$refs.audioActive[3].play();
         }
-        sessionStorage.setItem('rank_data', rank_data_source)
+        sessionStorage.setItem('rank_data', JSON.stringify(rank_data_source))
         // 语音提示 结束
         this.$nextTick(() => {
           this.rank_loading = false;
@@ -350,7 +342,7 @@ export default {
     margin-left: 20px;
   }
   .el-table {
-    font-size: 14px;
+    font-size: 18px;
   }
   .font {
     font-weight: bold; 

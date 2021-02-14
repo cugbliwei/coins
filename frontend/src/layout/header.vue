@@ -6,7 +6,7 @@
         WELCOME, {{username}}
       </div>
       <div class="tools">
-        <to-edit-account v-if="username == 'admin'" />
+        <to-edit-account />
         <to-add-account v-if="username == 'admin'" />
         <span class="tools-item" @click="quik"><i class="el-icon-error"></i>退出</span>
       </div>

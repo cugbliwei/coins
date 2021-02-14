@@ -10,7 +10,7 @@
             <span style="font-weight: bold; color: red;">{{scope.row.rank_cnt}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="rank_time" width="250">
+        <el-table-column prop="rank_time" width="300">
           <template slot="header" slot-scope="scope">
             名次耗时预估(分钟)
             <select name="grade" id="grade" v-model="grade" :disabled="autorenewStatu">

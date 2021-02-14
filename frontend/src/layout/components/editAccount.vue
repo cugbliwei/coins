@@ -3,15 +3,18 @@
     <span class="tools-item" @click="toEditAccount"><i class="el-icon-edit"></i>修改账号信息</span>
     <!--修改账号弹窗-->
     <el-dialog
-      title="修改当前账号信息"
+      title="修改账号信息"
       :visible.sync="dialogVisible"
       append-to-body
       width="500px">
       <el-form label-width="80px" :model="formObj"ref="ruleForm">
+        <el-form-item label="用户名" v-if="username == 'admin'">
+          <el-input v-model="formObj.username"></el-input>
+        </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="formObj.password"></el-input>
         </el-form-item>
-        <el-form-item label="币商">
+        <el-form-item label="币商" v-if="username == 'admin'">
           <el-input v-model="formObj.nickname"></el-input>
         </el-form-item>
       </el-form>
@@ -35,6 +38,7 @@
         formObj: {
           password: '',
           nickname: '',
+          username: '',
         },
       }
     },
@@ -61,7 +65,7 @@
         if (this.formatStr(this.formObj.nickname) != '') {
           form.append('nickname', this.formObj.nickname);
         }
-        form.append('username', this.username);
+        form.append('username', this.formObj.username || this.username);
         api.updateuser(form).then(res => {
           if (res.data.status == true) {
             this.$message({
