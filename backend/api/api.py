@@ -121,14 +121,14 @@ def otc_sumary(coin_name):
     return results
 
 
-def get_origin(coin_name):
+def get_origin(coin_name, landun):
     results = {}
     ts = get_last_ts()
     if not ts:
         return {}
 
     for trade_type in ['sell', 'buy']:
-        sql = "select * from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt" % (ts, trade_type, coin_name)
+        sql = "select * from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' and landun=%s order by rank_cnt" % (ts, trade_type, coin_name, landun)
         print(sql)
         data = db.query(sql)
         ret = []
