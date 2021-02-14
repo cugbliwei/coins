@@ -17,6 +17,12 @@ def user_get(username, password):
     return db.query(sql)
 
 
+def user_list():
+    sql = "select user_name as username,nick_name as nickname from otc_user"
+    # print(sql)
+    return db.query(sql)
+
+
 def user_update(username, password, nickname):
     if not username:
         return 'error'
