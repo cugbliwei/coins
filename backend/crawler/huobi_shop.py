@@ -82,7 +82,7 @@ def request(link):
 def fetch_coin(ts, trade_type, coin_id, coin_name, currPage):
     # link = 'https://otc-api-hk.eiijo.cn/v1/data/trade-market?coinId=%s&currency=1&tradeType=%s&currPage=%d&payMethod=0&acceptOrder=-1&country=&blockType=general&online=1&range=0&amount=' % (coin_id, trade_type, currPage)
     link = 'https://otc-api-hk.eiijo.cn/v1/data/trade-market?coinId=%s&currency=1&tradeType=%s&currPage=%d&payMethod=3&acceptOrder=-1&country=&blockType=general&online=1&range=0&amount=' % (coin_id, trade_type, currPage)
-    print(link)
+    # print(link)
     flag, rj = request(link)
     if not flag:
         print('request error: %s' % link)
@@ -149,7 +149,7 @@ def fetch_proxy():
 
 
 def fetch_coins(ts):
-    now = int(time.time())
+    # now = int(time.time())
     # coins = {'BTC': '1', 'ETH': '3', 'USDT': '2', 'LTC': '8', 'HT': '4', 'HUSD': '6', 'EOS': '5', 'XRP': '7'}
     coins = {'USDT': '2'}
     trade_types = ['sell', 'buy']
@@ -169,8 +169,8 @@ def fetch_coins(ts):
         t.join()
     '''
 
-    end = int(time.time())
-    print('花费耗时:', end - now)
+    # end = int(time.time())
+    # print('花费耗时:', end - now)
 
 
 def get_profile():
@@ -207,10 +207,10 @@ if __name__ == '__main__':
             # fetch_proxy()
             ts = str(int(time.time() * 1000))
 
-            print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            # print('%s start to refresh data...' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             fetch_coins(ts)
             insert_ts(ts)
-            print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            # print('%s end to refresh data' % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         except Exception as e:
             print(e)
             traceback.print_exc()
