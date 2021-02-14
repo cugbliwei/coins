@@ -1,4 +1,5 @@
 import sys
+import json
 import time
 sys.path.append('../')
 from db import db
@@ -204,3 +205,21 @@ def get_origin(coin_name, landun):
             ret.append({'coin_name': coin_name, 'rank_cnt': rank_cnt, 'user_name': user_name, 'trade_month_times': trade_month_times, 'order_complete_rate': order_complete_rate, 'trade_count': trade_count, 'min_trade_limit': min_trade_limit, 'max_trade_limit': max_trade_limit, 'pay_type': pay_type, 'pay_name': pay_name, 'landun': landun, 'price': price})
         results[trade_type] = ret
     return results
+
+def otc_tuntu_sub_copy(trade_type, coin_name, number, ts1):
+    sql1 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts1, trade_type, coin_name, number)
+    # print(sql1)
+    data1 = db.query(sql1)
+    f = open('test.txt', 'a')
+    f.write(json.dumps(data1))
+    f.close()
+
+
+def otc_tuntu_copy(coin_name, number):
+    tss = get_last_min_ts()
+    for i in range(0, len(tss)):
+        otc_tuntu_sub('sell', coin_name, number, tss[i]['ts'])
+
+
+if __name__ == '__main':
+    otc_tuntu_copy('USDT', '10')
