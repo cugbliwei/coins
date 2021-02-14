@@ -212,7 +212,7 @@ def otc_tuntu_sub_copy(trade_type, coin_name, number, ts1):
     data1 = db.query(sql1)
     f = open('test.txt', 'a')
     for d in data1:
-        f.write(d['user_name'] + '\t' d['trade_count'] + '\n')
+        f.write(d['user_name'] + '\t' + d['trade_count'] + '\n')
     f.write('\n')
     f.close()
 
