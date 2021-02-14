@@ -211,14 +211,16 @@ def otc_tuntu_sub_copy(trade_type, coin_name, number, ts1):
     # print(sql1)
     data1 = db.query(sql1)
     f = open('test.txt', 'a')
-    f.write(json.dumps(data1))
+    for d in data1:
+        f.write(d['user_name'] + '\t' d['trade_count'] + '\n')
+    f.write('\n')
     f.close()
 
 
 def otc_tuntu_copy(coin_name, number):
     tss = get_last_min_ts()
     for i in range(0, len(tss)):
-        otc_tuntu_sub('sell', coin_name, number, tss[i]['ts'])
+        otc_tuntu_sub_copy('sell', coin_name, number, tss[i]['ts'])
 
 
 if __name__ == '__main':
