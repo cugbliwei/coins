@@ -90,7 +90,8 @@ async def otc_sumary(request):
 async def otc_origin(request):
     data = await request.post()
     coin_name = data['coin_name']
-    results = api.get_origin(coin_name)
+    landun = data['landun']
+    results = api.get_origin(coin_name, landun)
     return web.json_response(results)
 
 
