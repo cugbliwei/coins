@@ -95,12 +95,5 @@
 </script>
 
 <style scoped>
-  .tools-item {
-    display: inline-block;
-    margin-left: 12px;
-    cursor: pointer;
-  }
-  .tools-item:hover {
-    color: #409EFF;
-  }
+
 </style>

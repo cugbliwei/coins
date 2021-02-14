@@ -23,5 +23,21 @@ export default {
       method: 'post',
       data,
     })
-  }
+  },
+
+  getuserlist (data) {
+    return ajax({
+      url: '/otc/user/list',
+      method: 'post',
+      data,
+    })
+  },
+
+  dropuser (data) {
+    return ajax({
+      url: '/otc/user/delete',
+      method: 'post',
+      data,
+    })
+  },
 }

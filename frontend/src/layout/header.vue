@@ -8,6 +8,7 @@
       <div class="tools">
         <to-edit-account />
         <to-add-account v-if="username == 'admin'" />
+        <edit-user-list v-if="username == 'admin'" />
         <span class="tools-item" @click="quik"><i class="el-icon-error"></i>退出</span>
       </div>
     </div>
@@ -16,9 +17,10 @@
 <script>
   import toEditAccount from './components/editAccount'
   import toAddAccount from './components/addAccount'
+  import editUserList from './components/userlist'
   export default {
     components: {
-      toEditAccount, toAddAccount
+      toEditAccount, toAddAccount, editUserList
     },
     mounted () {
       
@@ -91,6 +93,9 @@
   .tools {
     position: relative;
   }
+</style>
+
+<style>
   .tools-item {
     display: inline-block;
     margin-left: 12px;
@@ -98,8 +103,5 @@
   }
   .tools-item:hover {
     color: #409EFF;
-  }
-  .tools-item:first-child {
-    margin-left: 0;
   }
 </style>
