@@ -40,8 +40,8 @@ async def otc_user_get(request):
 async def otc_user_update(request):
     data = await request.post()
     username = data['username']
-    password = data['password']
-    nickname = data['nickname']
+    password = data.get('password', '')
+    nickname = data.get('nickname', '')
     result = api.user_update(username, password, nickname)
     if not result:
         return web.json_response({'status': True, 'msg': '更新数据成功'})
