@@ -1,4 +1,5 @@
 import sys
+import time
 sys.path.append('../')
 from db import db
 
@@ -44,6 +45,12 @@ def get_last_ts2():
     return ''
 
 
+def get_last_min_ts():
+    ts = str(int(time.time() * 1000 - (60 * 1000)))
+    sql = "select ts from otc_ts where ts>='%s' order by ts" % ts
+    return db.query(sql)
+
+
 def otc_rank(coin_name, nickname):
     results = {}
     ts = get_last_ts()
@@ -61,15 +68,15 @@ def otc_rank(coin_name, nickname):
             rank_cnt = res['rank_cnt']
             tuntu = otc_tuntu(coin_name, rank_cnt - 1)
             if tuntu[trade_type] == 0:
-                entry_rank_1 = 0
+                entry_rank_1 = -1
             else:
-                entry_rank_1 = tuntu[trade_type + '_origin'] / (0 - tuntu[trade_type])
+                entry_rank_1 = tuntu[trade_type + '_origin'] / tuntu[trade_type]
             ret.append({'price': price, 'trade_count': trade_count, 'rank_cnt': rank_cnt, 'entry_rank_1': entry_rank_1})
         results[trade_type] = ret
     return results
 
 
-def otc_tuntu_sub(coin_name, number, ts):
+def otc_tuntu_sum(coin_name, number, ts):
     res = {}
     for trade_type in ['sell', 'buy']:
         sql = "select sum(trade_count) as trade_count_sum from (select trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s) a" % (ts, trade_type, coin_name, number)
@@ -83,21 +90,49 @@ def otc_tuntu_sub(coin_name, number, ts):
     return res
 
 
+def otc_tuntu_sub(coin_name, number, ts1, ts2):
+    res = {}
+    for trade_type in ['sell', 'buy']:
+        sql1 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts1, trade_type, coin_name, number)
+        print(sql1)
+        data1 = db.query(sql1)
+
+        sql2 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts2, trade_type, coin_name, number)
+        print(sql2)
+        data2 = db.query(sql2)
+
+        xsum = 0
+        for data11 in data1:
+            user_name1 = data11['user_name']
+            trade_count1 = data11['trade_count']
+            for data22 in data2:
+                user_name2 = data22['user_name']
+                if user_name1 == user_name2:
+                    trade_count2 = data22['trade_count']
+                    xsum += trade_count1 - trade_count2
+                    break
+        res[trade_type] = xsum
+    return res
+
+
 def otc_tuntu(coin_name, number):
+    tss = get_last_min_ts()
+    if not tss or len(tss) == 1:
+        return {'sell': 0, 'buy': 0, 'sell_origin': 0, 'buy_origin': 0}
+
+    sell, buy = 0, 0
+    for i in range(0, len(tss) - 1):
+        res = otc_tuntu_sub(coin_name, number, tss[i]['ts'], tss[i+1]['ts'])
+        sell += res['sell']
+        buy += res['buy']
+
+    # 统计总和
     ts1 = get_last_ts()
     if not ts1:
         return {}
 
-    res1 = otc_tuntu_sub(coin_name, number, ts1)
-
-    ts2 = get_last_ts2()
-    if not ts2:
-        return {}
-
-    res2 = otc_tuntu_sub(coin_name, number, ts2)
-
-    sub = int(ts1) - int(ts2)
-    return {'sell': (res1['sell'] - res2['sell']) * (60 * 1000 / sub), 'buy': (res1['buy'] - res2['buy']) * (60 * 1000 / sub), 'sell_origin': res1['sell'], 'buy_origin': res1['buy']}
+    res1 = otc_tuntu_sum(coin_name, number, ts1)
+    return {'sell': sell, 'buy': buy, 'sell_origin': res1['sell'], 'buy_origin': res1['buy']}
 
 
 def otc_sumary(coin_name):
