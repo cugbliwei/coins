@@ -220,10 +220,10 @@ export default {
           this.rank_loading = false;
         })
       }).catch(err => {
-        this.$message({
-          message: '查询排名数据失败',
-          type: 'warning'
-        })
+        // this.$message({
+        //   message: '查询排名数据失败',
+        //   type: 'warning'
+        // })
         this.rank_loading = false;
       })
     },
