@@ -40,9 +40,9 @@ async def otc_user_get(request):
 async def otc_user_list(request):
     result = api.user_list()
     if result:
-        return web.json_response({'status': True, 'msg': '获取账号列表成功'})
+        return web.json_response({'status': True, 'msg': '获取账号列表成功', 'users': result})
     else:
-        return web.json_response({'status': False, 'msg': '获取账号列表失败'})
+        return web.json_response({'status': False, 'msg': '获取账号列表失败', 'users': []})
 
 
 @routes.post('/otc/user/update')
