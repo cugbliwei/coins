@@ -1,5 +1,5 @@
 <template>
-  <div class="g-body">
+  <div class="g-body datas">
     <div class="condition">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="币种">
@@ -238,19 +238,20 @@ export default {
         }
 
         // 语音提示 开始
-        let summary_data = sessionStorage.getItem('rank_data')
+        let summary_data_str = sessionStorage.getItem('summary_data')
         let summary_data_source = {
           summary_buy_10: res.data.buy[0].price_cnt > 10,
           summary_sell_10: res.data.sell[0].price_cnt > 10,
         }
-        if (!summary_data) {
+        if (!summary_data_str) {
           if (summary_data_source.summary_sell_10 == true) this.$refs.audioActive[4].play();
           if (summary_data_source.summary_buy_10 == true) this.$refs.audioActive[5].play();
         } else {
+          let summary_data = JSON.parse(summary_data_str)
           if (summary_data_source.rank_sell_20 == true && summary_data.rank_sell_20 == false) this.$refs.audioActive[0].play();
           if (summary_data_source.rank_sell_10 == true && summary_data.rank_sell_10 == false) this.$refs.audioActive[1].play();
         }
-        sessionStorage.setItem('summary_data', summary_data_source)
+        sessionStorage.setItem('summary_data', JSON.stringify(summary_data_source))
         // 语音提示 结束
 
         this.$nextTick(() => {
@@ -341,7 +342,7 @@ export default {
     color: #ff6a00;
     margin-left: 20px;
   }
-  .el-table {
+  .datas .el-table {
     font-size: 18px;
   }
   .font {
