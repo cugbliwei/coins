@@ -7,25 +7,41 @@ from db import db
 def user_set(username, password, nickname, token):
     data = [(username, nickname, password, token)]
     sql = "insert into otc_user values(%s,%s,%s,%s)"
-    print(sql)
+    # print(sql)
     return db.insertmany(sql, data)
 
 
 def user_get(username, password):
     sql = "select * from otc_user where user_name='%s' and password='%s'" % (username, password)
-    print(sql)
+    # print(sql)
     return db.query(sql)
 
 
 def user_update(username, password, nickname):
-    sql = "update otc_user set password='%s',nick_name='%s' where user_name='%s'" % (password, nickname, username)
-    print(sql)
+    if not username:
+        return 'error'
+
+    if password and nickname:
+        sql = "update otc_user set password='%s',nick_name='%s' where user_name='%s'" % (password, nickname, username)
+    elif password and not nickname:
+        sql = "update otc_user set password='%s' where user_name='%s'" % (password, username)
+    elif not password and nickname:
+        sql = "update otc_user set nick_name='%s' where user_name='%s'" % (nickname, username)
+    else:
+        return 'error'
+    # print(sql)
+    return db.execute(sql)
+
+
+def user_delete(username):
+    sql = "delete from otc_user where user_name='%s'" % username
+    # print(sql)
     return db.execute(sql)
 
 
 def set_profile(refresh_time):
     sql = "update otc_profile set refresh_time=%s" % refresh_time
-    print(sql)
+    # print(sql)
     return db.execute(sql)
 
 
@@ -59,7 +75,7 @@ def otc_rank(coin_name, nickname):
 
     for trade_type in ['sell', 'buy']:
         sql = "select price,trade_count,rank_cnt from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' and user_name='%s'" % (ts, trade_type, coin_name, nickname)
-        print(sql)
+        # print(sql)
         data = db.query(sql)
         ret = []
         for res in data:
@@ -80,7 +96,7 @@ def otc_tuntu_sum(coin_name, number, ts):
     res = {}
     for trade_type in ['sell', 'buy']:
         sql = "select sum(trade_count) as trade_count_sum from (select trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s) a" % (ts, trade_type, coin_name, number)
-        print(sql)
+        # print(sql)
         data = db.query(sql)
         if data and data[0]['trade_count_sum']:
             res[trade_type] = data[0]['trade_count_sum']
@@ -94,11 +110,11 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
     res = {}
     for trade_type in ['sell', 'buy']:
         sql1 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts1, trade_type, coin_name, number)
-        print(sql1)
+        # print(sql1)
         data1 = db.query(sql1)
 
         sql2 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts2, trade_type, coin_name, number)
-        print(sql2)
+        # print(sql2)
         data2 = db.query(sql2)
 
         xsum = 0
@@ -143,7 +159,7 @@ def otc_sumary(coin_name):
 
     for trade_type in ['sell', 'buy']:
         sql = "select price,count(*) as price_cnt,avg(trade_count) as trade_count_avg,sum(trade_count) as trade_count_sum from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' group by price" % (ts, trade_type, coin_name)
-        print(sql)
+        # print(sql)
         data = db.query(sql)
         ret = []
         for res in data:
@@ -164,7 +180,7 @@ def get_origin(coin_name, landun):
 
     for trade_type in ['sell', 'buy']:
         sql = "select * from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' and landun=%s order by rank_cnt" % (ts, trade_type, coin_name, landun)
-        print(sql)
+        # print(sql)
         data = db.query(sql)
         ret = []
         for res in data:

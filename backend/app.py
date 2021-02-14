@@ -40,13 +40,24 @@ async def otc_user_get(request):
 async def otc_user_update(request):
     data = await request.post()
     username = data['username']
-    password = data['password']
-    nickname = data['nickname']
+    password = data.get('password', '')
+    nickname = data.get('nickname', '')
     result = api.user_update(username, password, nickname)
     if not result:
         return web.json_response({'status': True, 'msg': '更新数据成功'})
     else:
         return web.json_response({'status': False, 'msg': '更新数据失败'})
+
+
+@routes.post('/otc/user/delete')
+async def otc_user_delete(request):
+    data = await request.post()
+    username = data['username']
+    result = api.user_delete(username)
+    if not result:
+        return web.json_response({'status': True, 'msg': '删除用户成功'})
+    else:
+        return web.json_response({'status': False, 'msg': '删除用户失败'})
 
 
 @routes.post('/otc/profile')
