@@ -49,6 +49,17 @@ async def otc_user_update(request):
         return web.json_response({'status': False, 'msg': '更新数据失败'})
 
 
+@routes.post('/otc/user/delete')
+async def otc_user_delete(request):
+    data = await request.post()
+    username = data['username']
+    result = api.user_delete(username)
+    if not result:
+        return web.json_response({'status': True, 'msg': '删除用户成功'})
+    else:
+        return web.json_response({'status': False, 'msg': '删除用户失败'})
+
+
 @routes.post('/otc/profile')
 async def otc_profile(request):
     data = await request.post()

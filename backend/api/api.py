@@ -18,7 +18,23 @@ def user_get(username, password):
 
 
 def user_update(username, password, nickname):
-    sql = "update otc_user set password='%s',nick_name='%s' where user_name='%s'" % (password, nickname, username)
+    if not username:
+        return 'error'
+
+    if password and nickname:
+        sql = "update otc_user set password='%s',nick_name='%s' where user_name='%s'" % (password, nickname, username)
+    elif password and not nickname:
+        sql = "update otc_user set password='%s' where user_name='%s'" % (password, username)
+    elif not password and nickname:
+        sql = "update otc_user set nick_name='%s' where user_name='%s'" % (nickname, username)
+    else:
+        return 'error'
+    # print(sql)
+    return db.execute(sql)
+
+
+def user_delete(username):
+    sql = "delete from otc_user where user_name='%s'" % username
     # print(sql)
     return db.execute(sql)
 
