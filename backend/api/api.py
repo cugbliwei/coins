@@ -109,7 +109,7 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
                 user_name2 = data22['user_name']
                 if user_name1 == user_name2:
                     trade_count2 = data22['trade_count']
-                    xsum += trade_count1 - trade_count2
+                    xsum += float(trade_count1) - float(trade_count2)
                     break
         res[trade_type] = xsum
     return res
