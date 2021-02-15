@@ -135,7 +135,7 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
                 exists1[user_name1] = 1
                 sumMap[user_name1] = float(data11['trade_count'])
 
-        exists2, records = {}, {}
+        exists2, exists3, records = {}, {}, {}
         xsum1, xsum2 = 0, 0
         for data22 in data2:
             user_name2 = data22['user_name']
@@ -144,17 +144,22 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
             else:
                 exists2[user_name2] = 1
 
-            if user_name2 in exists1:
+            if user_name2 in exists1 and user_name2 not in exists3:
                 xsum1 += sumMap[user_name2]
+                exists3[user_name2] = True
             if user_name2 in exists1 and exists1[user_name2] == 1 and exists2[user_name2] == 2:
                 records[user_name2] = False
 
         for data22 in data2:
             user_name2 = data22['user_name']
             trade_count2 = float(data11['trade_count'])
-            if user_name2 in records and not records[user_name2]:
+            if user_name2 in exists1:
+                if records[user_name2]:
+                    continue
+
                 xsum2 += trade_count2
-                records[user_name2] = True
+                if user_name2 in records and not records[user_name2]:
+                    records[user_name2] = True
 
         res[trade_type] = xsum1 - xsum2
     return res
