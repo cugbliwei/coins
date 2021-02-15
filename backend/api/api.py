@@ -154,7 +154,7 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
             user_name2 = data22['user_name']
             trade_count2 = float(data11['trade_count'])
             if user_name2 in exists1:
-                if records[user_name2]:
+                if user_name2 in records and records[user_name2]:
                     continue
 
                 xsum2 += trade_count2
