@@ -128,20 +128,20 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
         sumMap = {}
         for data11 in data1:
             user_name1 = data11['user_name']
-            print(user_name1, data11['trade_count'])
+            # print(user_name1, data11['trade_count'])
             if user_name1 in exists1:
                 exists1[user_name1] += 1
                 sumMap[user_name1] += float(data11['trade_count'])
             else:
                 exists1[user_name1] = 1
                 sumMap[user_name1] = float(data11['trade_count'])
-        print('\n')
+        # print('\n')
 
         exists2, exists3, records = {}, {}, {}
         xsum1, xsum2 = 0, 0
         for data22 in data2:
             user_name2 = data22['user_name']
-            print(user_name2, data22['trade_count'])
+            # print(user_name2, data22['trade_count'])
             if user_name2 in exists2:
                 exists2[user_name2] += 1
             else:
@@ -152,7 +152,7 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
                 exists3[user_name2] = True
             if user_name2 in exists1 and exists1[user_name2] == 1 and exists2[user_name2] == 2:
                 records[user_name2] = False
-        print('\n')
+        # print('\n')
 
         for data22 in data2:
             user_name2 = data22['user_name']
@@ -160,13 +160,15 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
             if user_name2 in exists1:
                 if user_name2 in records and records[user_name2]:
                     continue
+                if user_name2 in exists1 and exists1[user_name2] == 1 and exists2[user_name2] == 1 and sumMap[user_name2] < trade_count2:
+                    continue
 
                 xsum2 += trade_count2
                 if user_name2 in records and not records[user_name2]:
                     records[user_name2] = True
 
-        print(xsum1, xsum2, xsum1 - xsum2)
-        print('\n')
+        # print(xsum1, xsum2, xsum1 - xsum2)
+        # print('\n')
         res[trade_type] = xsum1 - xsum2
     return res
 
