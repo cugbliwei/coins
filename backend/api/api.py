@@ -146,7 +146,7 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
 
             if user_name2 in exists1:
                 xsum1 += sumMap[user_name2]
-            if exists1[user_name2] == 1 and exists2[user_name2] == 2:
+            if user_name2 in exists1 and exists1[user_name2] == 1 and exists2[user_name2] == 2:
                 records[user_name2] = False
 
         for data22 in data2:
