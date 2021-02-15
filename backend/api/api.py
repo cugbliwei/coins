@@ -120,21 +120,43 @@ def otc_tuntu_sub(coin_name, number, ts1, ts2):
         # print(sql1)
         data1 = db.query(sql1)
 
-        sql2 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %s" % (ts2, trade_type, coin_name, number)
+        sql2 = "select user_name,trade_count from otc_origin where ts='%s' and trade_type='%s' and coin_name='%s' order by rank_cnt limit %d" % (ts2, trade_type, coin_name, int(number) + 5)
         # print(sql2)
         data2 = db.query(sql2)
 
-        xsum = 0
+        exists1 = {}
+        sumMap = {}
         for data11 in data1:
             user_name1 = data11['user_name']
-            trade_count1 = data11['trade_count']
-            for data22 in data2:
-                user_name2 = data22['user_name']
-                if user_name1 == user_name2:
-                    trade_count2 = data22['trade_count']
-                    xsum += float(trade_count1) - float(trade_count2)
-                    break
-        res[trade_type] = xsum
+            if user_name1 in exists1:
+                exists1[user_name1] += 1
+                sumMap[user_name1] += float(data11['trade_count'])
+            else:
+                exists1[user_name1] = 1
+                sumMap[user_name1] = float(data11['trade_count'])
+
+        exists2, records = {}, {}
+        xsum1, xsum2 = 0, 0
+        for data22 in data2:
+            user_name2 = data22['user_name']
+            if user_name2 in exists2:
+                exists2[user_name2] += 1
+            else:
+                exists2[user_name2] = 1
+
+            if user_name2 in exists1:
+                xsum1 += sumMap[user_name2]
+            if exists1[user_name2] == 1 and exists2[user_name2] == 2:
+                records[user_name2] = False
+
+        for data22 in data2:
+            user_name2 = data22['user_name']
+            trade_count2 = float(data11['trade_count'])
+            if user_name2 in records and not records[user_name2]:
+                xsum2 += trade_count2
+                records[user_name2] = True
+
+        res[trade_type] = xsum1 - xsum2
     return res
 
 
