@@ -29,8 +29,8 @@ def create_conn():
 
 
 def close_conn(conn, cursor):
-    conn.close()
     cursor.close()
+    conn.close()
 
 
 def insertmany(sql, data):
